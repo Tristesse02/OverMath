@@ -20,7 +20,14 @@ public class PlayerController : MonoBehaviour
 
     private TrailRenderer trail_renderer;
 
-    private enum MovementState {
+    // Proximity and Interactable
+    public float interactionRange = 10.0f;
+    // Defines which objects can be detected as "interactable".
+    public LayerMask interactableLayer;
+    private Interactable currentInteractable;
+
+    private enum MovementState
+    {
         Walking,
         Idle,
         Jumping,
@@ -41,8 +48,10 @@ public class PlayerController : MonoBehaviour
         trail_renderer = GetComponent<TrailRenderer>();
     }
 
-    void UpdateSpeed() {
-        switch (this.current_state) {
+    void UpdateSpeed()
+    {
+        switch (this.current_state)
+        {
             case MovementState.Walking:
                 this.trail_renderer.enabled = false;
                 this.speed = walking_velocity; break;
@@ -58,21 +67,25 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void SetState(MovementState state) {
+    void SetState(MovementState state)
+    {
         this.current_state = state;
-        this.animation_controller.SetBool("Walking", state==MovementState.Walking);
-        if (state == MovementState.Jumping) {
+        this.animation_controller.SetBool("Walking", state == MovementState.Walking);
+        if (state == MovementState.Jumping)
+        {
             this.animation_controller.SetTrigger("Jumping");
         }
-        this.animation_controller.SetBool("Sprinting", state==MovementState.Sprinting);
-        if (state == MovementState.Dashing) {
+        this.animation_controller.SetBool("Sprinting", state == MovementState.Sprinting);
+        if (state == MovementState.Dashing)
+        {
             this.animation_controller.SetTrigger("Dashing");
             dash_timer = 0.5f;
             dash_direction = movement_direction;
         }
     }
 
-    void CheckState() {
+    void CheckState()
+    {
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
         {
             if (character_controller.isGrounded && Input.GetKey(KeyCode.Space))
@@ -91,9 +104,13 @@ public class PlayerController : MonoBehaviour
             {
                 SetState(MovementState.Walking);
             }
-        } else if (character_controller.isGrounded && Input.GetKey(KeyCode.Space)) {
+        }
+        else if (character_controller.isGrounded && Input.GetKey(KeyCode.Space))
+        {
             SetState(MovementState.Jumping);
-        } else {
+        }
+        else
+        {
             SetState(MovementState.Idle);
         }
     }
@@ -101,6 +118,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DetectInteractable();
+
+        if (currentInteractable != null && Input.GetKeyDown(KeyCode.F))
+        {
+            currentInteractable.Interact();
+            ClearCurrentHighlight();
+        }
+
         CheckState();
         UpdateSpeed();
 
@@ -136,4 +161,43 @@ public class PlayerController : MonoBehaviour
 
         character_controller.Move(movement_direction * speed * Time.deltaTime);
     }
+
+    void DetectInteractable()
+    {
+        // Find all colliders within the interaction range
+        // If there are any objects within this range, they are stored in hitColliders as an array of colliders
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, interactionRange, interactableLayer);
+
+        // If there are one or more object in this range
+        if (hitColliders.Length > 0)
+        {
+            Interactable nearestInteractable = hitColliders[0].GetComponent<Interactable>();
+
+            if (nearestInteractable != currentInteractable)
+            {
+                ClearCurrentHighlight();
+                currentInteractable = nearestInteractable;
+                currentInteractable?.Highlight(true);
+            }
+        }
+        else
+        {
+            ClearCurrentHighlight();
+        }
+    }
+
+    void ClearCurrentHighlight()
+    {
+        if (currentInteractable != null)
+        {
+            currentInteractable?.Highlight(false);
+            currentInteractable = null;
+        }
+    }
+
+    // void PickUpItem() 
+    // {
+    //     interactable.SetActive(false);
+    //     ClearHighlight();
+    // }
 }
