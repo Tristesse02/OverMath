@@ -723,7 +723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   highlightMaterial: {fileID: 2100000, guid: d1729a90b7827f540bb23a33d3612a56, type: 2}
   originalMaterial: {fileID: 2100000, guid: b730ff60992db134ab5b42060f970d2b, type: 2}
-  blinkDuration: 0.5
+  blinkDuration: 1.5
 --- !u!136 &673907478
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1223,7 +1223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   highlightMaterial: {fileID: 2100000, guid: d1729a90b7827f540bb23a33d3612a56, type: 2}
   originalMaterial: {fileID: 2100000, guid: b730ff60992db134ab5b42060f970d2b, type: 2}
-  blinkDuration: 0.5
+  blinkDuration: 1.5
 --- !u!136 &998090711
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1538,7 +1538,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   highlightMaterial: {fileID: 2100000, guid: d1729a90b7827f540bb23a33d3612a56, type: 2}
   originalMaterial: {fileID: 2100000, guid: b730ff60992db134ab5b42060f970d2b, type: 2}
-  blinkDuration: 0.5
+  blinkDuration: 1.5
 --- !u!136 &1319599886
 CapsuleCollider:
   m_ObjectHideFlags: 0
